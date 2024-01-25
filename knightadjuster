@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 CONFIG=~/.config/knightadjusterrc
 
@@ -25,10 +25,13 @@ export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
 if [ -e "$CONFIG" ]; then . "$CONFIG"; fi
 
+if [[ "$1" != "" ]]; then THRESHOLD_DARK=$1; fi
+
 if [ $(qdbus org.kde.KWin /ColorCorrect org.kde.kwin.ColorCorrect.currentTemperature) -lt $THRESHOLD_DARK ]; then
 	plasmacolors=$PLASMA_DARK
 	cursorcolors=$CURSOR_DARK
 	iconcolors=$ICON_DARK
+	sed -i s/black/white/g /home/aroun/UnixSync/dev/aroun.omp.json
 	konsolecolors=$KONSOLE_DARK
 	chromecolors=$CHROME_DARK
 	wallpaper=$WALLPAPER_DARK
@@ -36,6 +39,7 @@ else
 	plasmacolors=$PLASMA_LIGHT
 	cursorcolors=$CURSOR_LIGHT
 	iconcolors=$ICON_LIGHT
+	sed -i s/white/black/g /home/aroun/UnixSync/dev/aroun.omp.json
 	konsolecolors=$KONSOLE_LIGHT
 	chromecolors=$CHROME_LIGHT
 	wallpaper=$WALLPAPER_LIGHT
@@ -76,18 +80,18 @@ else
 	done
 fi
 
-chromepid=$(pgrep chrome)
-chromedark=$(grep -o enable-force-dark ~/.config/google-chrome*/'Local State')
-
-if [ "x$chromedark" = x ]; then
-	true
-elif [ "x$chromepid" = x ]; then
-	sed -i s/enable-force-dark@./enable-force-dark@$chromecolors/ ~/.config/google-chrome*/'Local State'
-else
-	if kdialog --yesno 'Restart chrome?'; then
-		pkill -INT -f chrome
-		pidwait chrome
-		sed -i s/enable-force-dark@./enable-force-dark@$chromecolors/ ~/.config/google-chrome*/'Local State'
-		qdbus org.kde.klauncher5 /KLauncher org.kde.KLauncher.kdeinit_exec google-chrome --restore-last-session "" ""
-	fi
-fi
+#chromepid=$(pgrep chrome)
+#chromedark=$(grep -o enable-force-dark ~/.config/google-chrome*/'Local State')
+#
+#if [ "x$chromedark" = x ]; then
+#	true
+#elif [ "x$chromepid" = x ]; then
+#	sed -i s/enable-force-dark@./enable-force-dark@$chromecolors/ ~/.config/google-chrome*/'Local State'
+#else
+#	if kdialog --yesno 'Restart chrome?'; then
+#		pkill -INT -f chrome
+#		pidwait chrome
+#		sed -i s/enable-force-dark@./enable-force-dark@$chromecolors/ ~/.config/google-chrome*/'Local State'
+#		qdbus org.kde.klauncher5 /KLauncher org.kde.KLauncher.kdeinit_exec google-chrome --restore-last-session "" ""
+#	fi
+#fi
